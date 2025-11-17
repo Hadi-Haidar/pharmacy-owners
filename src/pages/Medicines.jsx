@@ -198,10 +198,7 @@ const Medicines = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl">
-              <Package className="w-7 h-7 text-white" />
-            </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
             All Medicines Catalog
           </h1>
         </div>

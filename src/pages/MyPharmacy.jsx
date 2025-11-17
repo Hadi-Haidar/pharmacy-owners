@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { medicineService } from '../services/medicineService';
-import { List, Search, Trash2, RefreshCw, AlertCircle, X, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Building2, Search, Trash2, RefreshCw, AlertCircle, X, CheckCircle2, ChevronDown, ChevronUp, List } from 'lucide-react';
 
 const MyPharmacy = () => {
   const { owner, pharmacy } = useAuth();
@@ -211,8 +211,7 @@ const MyPharmacy = () => {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <List className="w-8 h-8 text-blue-600" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
             My Pharmacy
           </h1>
         </div>
