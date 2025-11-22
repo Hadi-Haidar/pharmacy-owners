@@ -52,7 +52,7 @@ const Layout = ({ children }) => {
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center">
               <Store className="w-6 h-6 text-white" strokeWidth={2.5} />
             </div>
-            <h1 className="font-semibold text-gray-900 text-sm">
+            <h1 className="font-bold text-gray-900 text-sm">
               Pharmacy Portal
             </h1>
           </Link>
@@ -76,11 +76,8 @@ const Layout = ({ children }) => {
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold truncate" style={{ color: '#22C55E' }}>
+              <p className="text-base font-extrabold truncate tracking-wide" style={{ color: '#06B6D4', fontFamily: 'Georgia, "Times New Roman", serif' }}>
                 {pharmacy?.title || 'Pharmacy'}
-              </p>
-              <p className="text-xs text-gray-600 truncate">
-                {owner?.name || 'Owner'}
               </p>
             </div>
           </div>

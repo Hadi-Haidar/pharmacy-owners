@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { medicineService } from '../services/medicineService';
-import { Package, Plus, Search, Filter, CheckSquare, Square, CheckCircle2 } from 'lucide-react';
+import { Package, Plus, Search, Filter, CheckSquare, Square, CheckCircle2, AlertCircle, ChevronDown, ChevronUp, X } from 'lucide-react';
 
 const Medicines = () => {
   const { owner, pharmacy } = useAuth();
@@ -17,6 +17,7 @@ const Medicines = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [expandedDescriptions, setExpandedDescriptions] = useState(new Set()); // Track expanded descriptions
   const [isMobile, setIsMobile] = useState(false); // Track if user is on mobile
+  const [showTips, setShowTips] = useState(false); // Track Quick Tips visibility
 
   useEffect(() => {
     // Only fetch if pharmacy and owner are available
@@ -69,19 +70,19 @@ const Medicines = () => {
         return;
       }
       
-      // Fetch all medicines and pharmacy inventory in parallel
+      // Fetch all medicines and pharmacy medicines in parallel
       console.log('Fetching medicines from:', `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/pharmacy-owner/medicines/all`);
       
       const [allMedicines, inventory] = await Promise.all([
         medicineService.getAllAvailableMedicines(),
         medicineService.getPharmacyMedicines(pharmacy.id, owner.id).catch(err => {
-          console.warn('Failed to fetch pharmacy inventory:', err);
-          return []; // Return empty array if inventory fetch fails
+          console.warn('Failed to fetch pharmacy medicines:', err);
+          return []; // Return empty array if pharmacy fetch fails
         })
       ]);
       
       console.log('Medicines fetched:', allMedicines);
-      console.log('Inventory fetched:', inventory);
+      console.log('Pharmacy medicines fetched:', inventory);
       
       setMedicines(allMedicines || []);
       setPharmacyInventory(inventory || []);
@@ -176,14 +177,14 @@ const Medicines = () => {
       setSuccessMessage(`${selectedMedicineIds.length} medicine(s) added successfully!`);
       setSelectedMedicineIds([]);
       
-      // Refresh inventory
+      // Refresh pharmacy
       const inventory = await medicineService.getPharmacyMedicines(pharmacy.id, owner.id);
       setPharmacyInventory(inventory);
 
       // Clear success message after 3 seconds
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err) {
-      setError(err.message || 'Failed to add medicines. Some may already be in your inventory.');
+      setError(err.message || 'Failed to add medicines. Some may already be in your pharmacy.');
       console.error(err);
     } finally {
       setAddingMedicines(false);
@@ -196,13 +197,54 @@ const Medicines = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
             All Medicines Catalog
           </h1>
         </div>
+        
+        {/* Quick Tips Toggle Button */}
+        <button
+          onClick={() => setShowTips(!showTips)}
+          className="flex items-center gap-2 px-3 py-2 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 rounded-lg font-medium transition-all duration-200"
+          title="Show helpful tips"
+        >
+          <AlertCircle className="w-5 h-5 text-blue-600" />
+          <span className="hidden sm:inline">Quick Tips</span>
+          {showTips ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )}
+        </button>
       </div>
+
+      {/* Collapsible Quick Tips */}
+      {showTips && (
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 animate-slideIn">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1 text-sm text-blue-800">
+              <p className="font-semibold mb-1">Quick Tips:</p>
+              <ul className="list-disc list-inside space-y-1">
+                <li>Browse all available medicines from the admin's catalog</li>
+                <li>Use filters to find medicines "Not Added Yet" to your pharmacy</li>
+                <li>Select multiple medicines at once using checkboxes</li>
+                <li>Click "Add Selected to Pharmacy" to add them to your pharmacy</li>
+                <li>Medicines marked as "Unavailable" by admin cannot be added</li>
+              </ul>
+            </div>
+            <button
+              onClick={() => setShowTips(false)}
+              className="p-1 hover:bg-blue-100 rounded transition text-blue-600 flex-shrink-0"
+              title="Close tips"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Success Message */}
       {successMessage && (
