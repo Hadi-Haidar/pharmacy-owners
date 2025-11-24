@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Menu, LogOut, Store, Package, Building2 } from 'lucide-react';
+import { Menu, LogOut, Store, Package, Building2, MessageCircle } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 const Layout = ({ children }) => {
@@ -25,6 +25,11 @@ const Layout = ({ children }) => {
       name: 'My Pharmacy',
       path: '/my-inventory',
       icon: Building2,
+    },
+    {
+      name: 'Messages',
+      path: '/chat',
+      icon: MessageCircle,
     },
   ];
 

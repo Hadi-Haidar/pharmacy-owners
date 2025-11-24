@@ -6,6 +6,7 @@ import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Medicines from './pages/Medicines';
 import MyPharmacy from './pages/MyPharmacy';
+import Chat from './pages/Chat';
 
 function App() {
   return (
@@ -34,6 +35,17 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <MyPharmacy />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/chat"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Chat />
                 </Layout>
               </ProtectedRoute>
             }
