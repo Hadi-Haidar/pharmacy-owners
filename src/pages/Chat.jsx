@@ -59,13 +59,34 @@ const Chat = () => {
       
       unsubscribe = onSnapshot(
         q, 
-        (snapshot) => {
+        async (snapshot) => {
           clearTimeout(loadingTimeout);
           
           const convs = [];
-          snapshot.forEach((doc) => {
-            convs.push({ id: doc.id, ...doc.data() });
-          });
+          
+          // Fetch user names for all conversations
+          for (const doc of snapshot.docs) {
+            const data = doc.data();
+            let userName = 'User';
+            let userEmail = '';
+            
+            try {
+              const user = await chatService.getUserById(data.userId);
+              userName = user.name || 'User';
+              userEmail = user.email || '';
+            } catch (error) {
+              console.error('Error fetching user:', error);
+              userName = `User ${data.userId?.substring(0, 8)}...`;
+              userEmail = '';
+            }
+            
+            convs.push({ 
+              id: doc.id, 
+              ...data,
+              userName,
+              userEmail
+            });
+          }
           
           // Sort by most recent message (done in JavaScript to avoid index requirement)
           convs.sort((a, b) => {
@@ -284,10 +305,10 @@ const Chat = () => {
                 <div className="flex items-start justify-between mb-1">
                   <div className="font-semibold text-gray-800 flex items-center gap-2">
                     <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold">
-                      {conv.userId?.substring(0, 2).toUpperCase()}
+                      {conv.userEmail?.substring(0, 2).toUpperCase() || conv.userName?.substring(0, 2).toUpperCase()}
                     </div>
                     <div>
-                      <div>User {conv.userId?.substring(0, 8)}...</div>
+                      <div>{conv.userEmail || conv.userName}</div>
                       <div className="text-xs text-gray-500 font-normal">
                         {formatConversationDate(conv.lastMessageAt)}
                       </div>
@@ -316,13 +337,13 @@ const Chat = () => {
             <div className="bg-white p-4 border-b border-gray-200 shadow-sm">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold">
-                  {selectedConversation.userId?.substring(0, 2).toUpperCase()}
+                  {selectedConversation.userEmail?.substring(0, 2).toUpperCase() || selectedConversation.userName?.substring(0, 2).toUpperCase()}
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800">
-                    User {selectedConversation.userId?.substring(0, 12)}...
+                    {selectedConversation.userEmail || selectedConversation.userName}
                   </h3>
-                  <p className="text-sm text-gray-500">Active conversation</p>
+                  <p className="text-sm text-gray-500">{selectedConversation.userName}</p>
                 </div>
               </div>
             </div>

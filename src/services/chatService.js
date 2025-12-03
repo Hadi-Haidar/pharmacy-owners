@@ -79,6 +79,14 @@ class ChatService {
     const response = await api.patch(`/chat/conversations/${conversationId}/archive`);
     return response.data;
   }
+
+  /**
+   * Get user details by ID
+   */
+  async getUserById(userId) {
+    const response = await api.get(`/admin/users/${userId}`);
+    return response.data;
+  }
 }
 
 export const chatService = new ChatService();
